@@ -24,11 +24,21 @@ protected:
 	UPROPERTY(VisibleAnyWhere, Category="Components")
 	USphereComponent* SphereComp;
 
+	UPROPERTY(EditDefaultsOnly,Category = "VFX")
+	UParticleSystem* PickupFX;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void PlayEffects();
+
+	
+
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 };
