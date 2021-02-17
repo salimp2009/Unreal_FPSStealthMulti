@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "FPSPlayerInterface.h"
 #include "FPSCharacter.generated.h"
 
 class UInputComponent;
@@ -13,9 +14,10 @@ class AFPSProjectile;
 class USoundBase;
 class UAnimSequence;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGetPickup);
 
 UCLASS()
-class AFPSCharacter : public ACharacter
+class AFPSCharacter : public ACharacter, public IFPSPlayerInterface
 {
 	GENERATED_BODY()
 
@@ -48,8 +50,34 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	UAnimSequence* FireAnimation;
 
-protected:
+	UPROPERTY(BlueprintReadWrite, Category="Gameplay")
+	bool bIsCarryingObjective;
+
+	// Player Interface Functions
 	
+	virtual void GetPickupItem() override;
+
+	virtual FOnGetPickupNative& GetPickupDelegate() override
+	{
+		return OnGetPickupNative;
+	}
+
+
+	void Pickup_Implementation() override;  // c++ implementtation of BPNative interface event of Pickup()
+
+	///** Delegate called when the GetPickup has been called */
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnGetPickup OnGetPickup;
+	
+	///** Native version above, called before BP delegate */
+	FOnGetPickupNative OnGetPickupNative;
+
+	/** BP  implementation of the OnGetPickup interface functions; Works */
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Inventory")
+	void GetPickup();
+
+protected:
+
 	/** Fires a projectile. */
 	void Fire();
 

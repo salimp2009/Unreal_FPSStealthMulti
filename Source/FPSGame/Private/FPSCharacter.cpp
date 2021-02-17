@@ -27,6 +27,11 @@ AFPSCharacter::AFPSCharacter()
 	GunMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FP_Gun"));
 	GunMeshComponent->CastShadow = false;
 	GunMeshComponent->SetupAttachment(Mesh1PComponent, "GripPoint");
+
+	// no pickups 
+	bIsCarryingObjective = false;
+
+	
 }
 
 
@@ -45,6 +50,38 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 }
 
+// Interface implementation C++ and BP using delegates
+void AFPSCharacter::GetPickupItem()
+{
+	bIsCarryingObjective = true;
+
+	// Delegates update/call events both c++ and BP native 
+	OnGetPickupNative.Broadcast();
+	OnGetPickup.Broadcast();
+
+	// BP implementable version
+	GetPickup();  
+	UE_LOG(LogTemp, Warning, TEXT("GetPickupItem(): C++ and BP Delegates"));
+}
+
+// C++ implementation of  BP version
+void AFPSCharacter::Pickup_Implementation()
+{
+	bIsCarryingObjective = true;
+	UE_LOG(LogTemp, Warning, TEXT("Pickup(): BP Native; C++ Implementation "));
+}
+
+
+// Interface implementation C++ and BP
+//void AFPSCharacter::NotifyOnGetPickup()
+//{
+//	bIsCarryingObjective = true;
+//	
+//	OnGetPickupNative.Broadcast();
+//	OnGetPickup.Broadcast();
+//
+//	GetPickup();  // tried to implement  a BP function 
+//}
 
 void AFPSCharacter::Fire()
 {
