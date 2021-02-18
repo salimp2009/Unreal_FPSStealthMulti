@@ -41,13 +41,32 @@ void AFPSBlackHole::OverlapInnerSphere(UPrimitiveComponent* OverlappedComponent,
 	{
 		OtherActor->Destroy();
 	}
-
 }
 
 // Called every frame
 void AFPSBlackHole::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Any object that has transforms 
+	TArray<UPrimitiveComponent*> OverlappingComps; 
+	
+	OuterSphereComponent->GetOverlappingComponents(OverlappingComps);
+
+	// Go thru overlapping object; if valid & they simulating physics apply radial force
+	// Destroy is done by the inner 
+	for (UPrimitiveComponent* PrimComp : OverlappingComps)
+	{
+		if (PrimComp && PrimComp->IsSimulatingPhysics())
+		{
+			const float SphereRadius = OuterSphereComponent->GetScaledSphereRadius();
+			const float ForceStrength = -2000.0f; // Negative value is used to pull components into the OuterSphere
+			
+			PrimComp->AddRadialForce(GetActorLocation(), SphereRadius, ForceStrength, ERadialImpulseFalloff::RIF_Constant, true);
+			
+		}
+
+	}
 
 }
 
