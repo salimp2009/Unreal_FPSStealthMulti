@@ -31,7 +31,6 @@ AFPSCharacter::AFPSCharacter()
 	// no pickups 
 	bIsCarryingObjective = false;
 
-	
 }
 
 
@@ -70,18 +69,6 @@ void AFPSCharacter::Pickup_Implementation()
 	bIsCarryingObjective = true;
 	UE_LOG(LogTemp, Warning, TEXT("Pickup(): BP Native; C++ Implementation "));
 }
-
-
-// Interface implementation C++ and BP
-//void AFPSCharacter::NotifyOnGetPickup()
-//{
-//	bIsCarryingObjective = true;
-//	
-//	OnGetPickupNative.Broadcast();
-//	OnGetPickup.Broadcast();
-//
-//	GetPickup();  // tried to implement  a BP function 
-//}
 
 void AFPSCharacter::Fire()
 {
