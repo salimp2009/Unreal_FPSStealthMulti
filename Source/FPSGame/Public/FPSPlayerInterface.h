@@ -33,10 +33,16 @@ public:
 	UFUNCTION()
 	virtual void GetPickupItem() = 0;
 
+	UFUNCTION()
+	virtual class APawn* GetPlayer() = 0;
+
 	/** Gets the delegate for when the inventory loads */
 	virtual FOnGetPickupNative& GetPickupDelegate() = 0;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Inventory")
 	void Pickup();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Objective")
+	bool HasObjective();
 
 };

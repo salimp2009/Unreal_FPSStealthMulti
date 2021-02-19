@@ -63,11 +63,21 @@ void AFPSCharacter::GetPickupItem()
 	UE_LOG(LogTemp, Warning, TEXT("GetPickupItem(): C++ and BP Delegates"));
 }
 
+APawn* AFPSCharacter::GetPlayer()
+{
+	return this;
+}
+
 // C++ implementation of  BP version
 void AFPSCharacter::Pickup_Implementation()
 {
 	bIsCarryingObjective = true;
 	UE_LOG(LogTemp, Warning, TEXT("Pickup(): BP Native; C++ Implementation "));
+}
+
+bool AFPSCharacter::HasObjective_Implementation()
+{
+	return bIsCarryingObjective;
 }
 
 void AFPSCharacter::Fire()

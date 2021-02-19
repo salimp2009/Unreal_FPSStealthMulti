@@ -57,6 +57,8 @@ public:
 	
 	virtual void GetPickupItem() override;
 
+	virtual class APawn* GetPlayer() override;
+
 	virtual FOnGetPickupNative& GetPickupDelegate() override
 	{
 		return OnGetPickupNative;
@@ -64,6 +66,9 @@ public:
 
 
 	void Pickup_Implementation() override;  // c++ implementtation of BPNative interface event of Pickup()
+
+	bool HasObjective_Implementation() override;
+
 
 	///** Delegate called when the GetPickup has been called */
 	UPROPERTY(BlueprintAssignable, Category = "Inventory")
