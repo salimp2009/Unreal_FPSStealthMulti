@@ -5,7 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/MeshComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "FPSCharacter.h"
+//#include "FPSCharacter.h"
 #include "FPSPlayerInterface.h"
 
 // Sets default values

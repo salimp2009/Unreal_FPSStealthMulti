@@ -59,6 +59,8 @@ public:
 
 	virtual class APawn* GetPlayer() override;
 
+
+
 	virtual FOnGetPickupNative& GetPickupDelegate() override
 	{
 		return OnGetPickupNative;

@@ -33,7 +33,7 @@ public:
 	UFUNCTION()
 	virtual void GetPickupItem() = 0;
 
-	UFUNCTION()
+	//UFUNCTION()
 	virtual class APawn* GetPlayer() = 0;
 
 	/** Gets the delegate for when the inventory loads */

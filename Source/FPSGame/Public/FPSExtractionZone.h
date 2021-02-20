@@ -25,6 +25,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UDecalComponent* DecalComp;
 
+	UPROPERTY(EditDefaultsOnly, Category="Sounds")
+	class USoundBase* ObjectiveMissingSound;
+
 	UFUNCTION()   // if a function is used to Bind a delegate UFUNCTION() is needed
 	void HandleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
