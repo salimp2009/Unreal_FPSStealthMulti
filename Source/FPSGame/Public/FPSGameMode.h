@@ -12,6 +12,12 @@ class AFPSGameMode : public AGameModeBase, public IFPSGameModeInterface
 {
 	GENERATED_BODY()
 
+protected:
+
+	// Alternative to ActorTag instead of Interface
+	UPROPERTY(EditDefaultsOnly, Category="Spectating")
+	TSubclassOf<UInterface> SpectatingViewPointClass;
+
 public:
 
 	AFPSGameMode();
