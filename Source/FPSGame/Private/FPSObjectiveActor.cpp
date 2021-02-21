@@ -50,7 +50,7 @@ void AFPSObjectiveActor::NotifyActorBeginOverlap(AActor* OtherActor)
 		//MyCharacter->bIsCarryingObjective = true;
 		PlayerInterface->GetPickupItem();
 		PlayerInterface->Execute_Pickup(OtherActor);
-		
+				
 		Destroy();
 	}
 }

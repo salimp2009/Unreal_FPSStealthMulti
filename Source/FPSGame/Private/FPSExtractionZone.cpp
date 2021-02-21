@@ -10,7 +10,6 @@
 #include "GameFramework/GameModeBase.h"
 #include "Sound/SoundBase.h"
 
-//C:\Program Files\Epic Games\UE_4.25\Engine\Source\Runtime\Engine\Classes\GameFramework\GameModeBase.h
 
 // Sets default values
 AFPSExtractionZone::AFPSExtractionZone()
@@ -25,6 +24,7 @@ AFPSExtractionZone::AFPSExtractionZone()
 	OverlapComp->SetHiddenInGame(true);
 
 	OverlapComp->OnComponentBeginOverlap.AddDynamic(this, &AFPSExtractionZone::HandleOverlap);
+	
 
 	DecalComp = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComp"));
 	DecalComp->DecalSize = FVector(200.0f, 200.0f, 200.0f);
