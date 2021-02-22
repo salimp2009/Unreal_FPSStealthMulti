@@ -44,12 +44,12 @@ void AFPSLaunchPad::OverLapLaunchPad(UPrimitiveComponent* OverlappedComponent, A
 	// Launch Character
 	if (PlayerInterface)
 	{
-		APawn* MyPlayer = PlayerInterface->GetPlayer();
+		ACharacter* MyCharacter = PlayerInterface->GetPlayerCharacter();
 
 		/** bXYOverride; if true replace the XY part of the Character's velocity instead of adding to it. 
 			bZOverride;  if true replace the Z component of the Character's velocity instead of adding to it.
 		*/
-		MyPlayer->LaunchPawn(LaunchVelocity, true, true);
+		MyCharacter->LaunchCharacter(LaunchVelocity, true, true);
 
 		/* Play FX; check if this can be used instead of GetWorld(); turn this into function*/
 		if (LaunchFX) UGameplayStatics::SpawnEmitterAtLocation(	GetWorld(), LaunchFX, GetActorLocation());
