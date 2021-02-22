@@ -36,6 +36,9 @@ public:
 	//UFUNCTION()
 	virtual class APawn* GetPlayer() = 0;
 
+	//UFUNCTION()
+	virtual class ACharacter* GetPlayerCharacter() = 0;
+
 	/** Gets the delegate for when the inventory loads */
 	virtual FOnGetPickupNative& GetPickupDelegate() = 0;
 

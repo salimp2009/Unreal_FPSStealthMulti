@@ -54,13 +54,14 @@ public:
 	bool bIsCarryingObjective;
 
 	// Player Interface Functions
-	
 	virtual void GetPickupItem() override;
 
 	virtual class APawn* GetPlayer() override;
+	
+	virtual class ACharacter* GetPlayerCharacter() override;
 
 
-
+	// Player Interface Functions with Delegates
 	virtual FOnGetPickupNative& GetPickupDelegate() override
 	{
 		return OnGetPickupNative;

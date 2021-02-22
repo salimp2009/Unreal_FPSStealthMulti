@@ -63,7 +63,14 @@ void AFPSCharacter::GetPickupItem()
 	UE_LOG(LogTemp, Warning, TEXT("GetPickupItem(): C++ and BP Delegates"));
 }
 
+// returns player as Pawn; needed for GameMode
 APawn* AFPSCharacter::GetPlayer()
+{
+	return this;
+}
+
+// returns as Actor; needed for LaunchPad...etc
+ACharacter* AFPSCharacter::GetPlayerCharacter()
 {
 	return this;
 }
