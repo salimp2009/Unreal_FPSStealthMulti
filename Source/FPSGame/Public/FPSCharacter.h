@@ -35,6 +35,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* CameraComponent;
 
+	/** Used with PawnSensingComp; to make AI hear voice  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	class UPawnNoiseEmitterComponent* NoiseEmitterComp;
+
 public:
 	AFPSCharacter();
 
@@ -53,6 +57,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category="Gameplay")
 	bool bIsCarryingObjective;
 
+
 	// Player Interface Functions
 	virtual void GetPickupItem() override;
 
@@ -64,6 +69,7 @@ public:
 	// Player Interface Functions with Delegates
 	virtual FOnGetPickupNative& GetPickupDelegate() override
 	{
+		
 		return OnGetPickupNative;
 	}
 

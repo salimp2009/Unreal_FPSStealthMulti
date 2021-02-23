@@ -5,7 +5,6 @@
 #include "Perception/PawnSensingComponent.h"
 #include "DrawDebugHelpers.h"
 
-//C:\Program Files\Epic Games\UE_4.25\Engine\Source\Runtime\Engine\Public\DrawDebugHelpers.h
 
 // Sets default values
 AFPSAIGuard::AFPSAIGuard()
@@ -17,6 +16,7 @@ AFPSAIGuard::AFPSAIGuard()
 	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComp"));
 
 	PawnSensingComp->OnSeePawn.AddDynamic(this, &AFPSAIGuard::OnPawnSeen);
+	PawnSensingComp->OnHearNoise.AddDynamic(this, &AFPSAIGuard::OnNoiseHeard);
 }
 
 // Called when the game starts or when spawned
@@ -24,6 +24,12 @@ void AFPSAIGuard::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+// Called every frame
+void AFPSAIGuard::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
@@ -34,13 +40,16 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("OnPawnSeen(AIGuard): %s"), *(SeenPawn->GetName()));
-	DrawDebugSphere(GetWorld(), SeenPawn->GetActorLocation(), 32.0f, 12, FColor::Yellow, false, 10.0f);
+	DrawDebugSphere(GetWorld(), SeenPawn->GetActorLocation(), 32.0f, 12, FColor::Red, false, 10.0f);
 }
 
-// Called every frame
-void AFPSAIGuard::Tick(float DeltaTime)
+void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, float Volume)
 {
-	Super::Tick(DeltaTime);
+
+	//UE_LOG(LogTemp, Warning, TEXT("OnHeardNoise(AIGuard): %s"), *(Instigator->GetName()));
+	DrawDebugSphere(GetWorld(), Location, 32.0f, 12, FColor::Green, false, 10.0f);
 }
+
+
 
 
