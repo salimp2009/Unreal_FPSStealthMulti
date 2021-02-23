@@ -22,8 +22,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	class UPawnSensingComponent* PawnSensingComp;
 
+	/* The function that will be binded dynamically to OnSeePawn delegate of PawnSensingComponent */
+	UFUNCTION()
+	void OnPawnSeen(APawn* SeenPawn);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };
