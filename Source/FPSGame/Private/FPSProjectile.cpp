@@ -25,7 +25,7 @@ AFPSProjectile::AFPSProjectile()
 	ProjectileMovement->InitialSpeed = 3000.f;
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
-	ProjectileMovement->bShouldBounce = true;
+	ProjectileMovement->bShouldBounce = true; // might be changed to False since we Destroy when we hit !!!!
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
@@ -38,7 +38,13 @@ void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
-
-		Destroy();
+		
 	}
+
+	/** GetInstigator() give us who has spawn the Projectile; 
+		e.g FPSCharacter spawn the Projectile in the FireFunction 
+		and passes himself as an instigator in the SpawnParams structure
+	*/
+	MakeNoise(1.0f, GetInstigator(), GetActorLocation());
+	Destroy();
 }
