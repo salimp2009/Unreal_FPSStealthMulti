@@ -4,6 +4,7 @@
 #include "FPSAIGuard.h"
 #include "Perception/PawnSensingComponent.h"
 #include "DrawDebugHelpers.h"
+#include "TimerManager.h"
 
 // Sets default values
 AFPSAIGuard::AFPSAIGuard()
@@ -24,6 +25,8 @@ void AFPSAIGuard::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	OriginalRotation = GetActorRotation();
+
 }
 
 // Called every frame
@@ -45,6 +48,8 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 
 void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, float Volume)
 {
+	DrawDebugSphere(GetWorld(), Location, 32.0f, 12, FColor::Green, false, 10.0f);
+
 	FVector Direction = Location - GetActorLocation();
 	Direction.Normalize();
 
@@ -52,8 +57,15 @@ void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, 
 	NewLookAt.Pitch = 0.0f;
 	NewLookAt.Roll = 0.0f;
 	SetActorRotation(NewLookAt);
-	
-	DrawDebugSphere(GetWorld(), Location, 32.0f, 12, FColor::Green, false, 10.0f);
+
+	/* if two noise heard when one timer is still on ; the second noise event will clear the current timer */
+	GetWorldTimerManager().ClearTimer(TimerHandleResetOrientation);
+	GetWorldTimerManager().SetTimer(TimerHandleResetOrientation,this, &AFPSAIGuard::ResetOrientation, 2.0f);
+}
+
+void AFPSAIGuard::ResetOrientation()
+{
+	SetActorRotation(OriginalRotation);
 }
 
 

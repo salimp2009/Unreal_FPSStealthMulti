@@ -14,7 +14,7 @@ class AFPSGameMode : public AGameModeBase, public IFPSGameModeInterface
 
 protected:
 
-	// Alternative to ActorTag instead of Interface
+	/** Interface class will be used to Search Class; Alternative to use tags re implemented in cpp file */
 	UPROPERTY(EditDefaultsOnly, Category="Spectating")
 	TSubclassOf<UInterface> SpectatingViewPointClass;
 
