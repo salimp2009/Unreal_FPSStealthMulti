@@ -24,5 +24,5 @@ class FPSGAME_API IFPSGameModeInterface
 public:
 
 	UFUNCTION()
-	virtual void HasCompletedMission(class APawn* PlayerPawn) = 0;
+	virtual void HasCompletedMission(class APawn* PlayerPawn, bool bMissionSuccess) = 0;
 };

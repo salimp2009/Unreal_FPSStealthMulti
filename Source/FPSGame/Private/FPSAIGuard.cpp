@@ -5,6 +5,8 @@
 #include "Perception/PawnSensingComponent.h"
 #include "DrawDebugHelpers.h"
 #include "TimerManager.h"
+#include "FPSGameModeInterface.h"
+#include "GameFramework/GameModeBase.h"
 
 // Sets default values
 AFPSAIGuard::AFPSAIGuard()
@@ -41,6 +43,17 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 	{
 		return;
 	}
+
+	/* TODO: turn this into MissionSuccess function and return a bool */
+// Interface class of GameMode is used to avoid casting
+	IFPSGameModeInterface* GM = Cast<IFPSGameModeInterface>(GetWorld()->GetAuthGameMode());
+	if (GM)
+	{
+		// Call mission Complete in GameMode using GameModeInterface; no casting
+		GM->HasCompletedMission(SeenPawn, false);
+	}
+
+
 
 	UE_LOG(LogTemp, Warning, TEXT("OnPawnSeen(AIGuard): %s"), *(SeenPawn->GetName()));
 	DrawDebugSphere(GetWorld(), SeenPawn->GetActorLocation(), 32.0f, 12, FColor::Red, false, 10.0f);

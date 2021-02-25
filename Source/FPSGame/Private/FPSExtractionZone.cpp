@@ -56,7 +56,7 @@ void AFPSExtractionZone::HandleOverlap(UPrimitiveComponent* OverlappedComponent,
 		if (GM)
 		{
 			// Call mission Complete in GameMode using GameModeInterface; no casting
-			if (MyPawn) GM->HasCompletedMission(MyPawn);
+			if (MyPawn) GM->HasCompletedMission(MyPawn, true);
 		}
 	}
 	else

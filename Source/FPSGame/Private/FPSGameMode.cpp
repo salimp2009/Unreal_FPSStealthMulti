@@ -17,12 +17,12 @@ AFPSGameMode::AFPSGameMode()
 	HUDClass = AFPSHUD::StaticClass();
 }
 
-void AFPSGameMode::HasCompletedMission(APawn* PlayerPawn)
+void AFPSGameMode::HasCompletedMission(APawn* PlayerPawn, bool bMissionSuccess)
 {
-	if(PlayerPawn) CompleteMission(PlayerPawn);
+	if(PlayerPawn) CompleteMission(PlayerPawn, bMissionSuccess);
 }
 
-void AFPSGameMode::CompleteMission(APawn* InstigatorPawn)
+void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 {
 	if (InstigatorPawn)
 	{
@@ -59,7 +59,7 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn)
 			UE_LOG(LogTemp, Warning, TEXT("GAMEMode::No SpectatingViewPointClass is SET in World. Please setup in GameMode Defaults!!!"));
 		}
 
-		OnMissionCompleted(InstigatorPawn);
+		OnMissionCompleted(InstigatorPawn, bMissionSuccess);
 	}
 
 }

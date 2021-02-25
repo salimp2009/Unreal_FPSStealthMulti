@@ -23,12 +23,12 @@ public:
 	AFPSGameMode();
 
 	// GameInterface functions; to avoid casting to GameMode directly
-	virtual void HasCompletedMission(class APawn* PlayerPawn) override; // pure c++ implementation
+	virtual void HasCompletedMission(class APawn* PlayerPawn, bool bMissionSuccess) override; // pure c++ implementation
 
-	void CompleteMission(APawn* InstigatorPawn);
+	void CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "GameMode")
-	void OnMissionCompleted(APawn* InstigatorPawn);
+	void OnMissionCompleted(APawn* InstigatorPawn, bool bMissionSuccess);
 
 };
 
