@@ -19,7 +19,7 @@ AFPSGameMode::AFPSGameMode()
 
 void AFPSGameMode::HasCompletedMission(APawn* PlayerPawn)
 {
-	CompleteMission(PlayerPawn);
+	if(PlayerPawn) CompleteMission(PlayerPawn);
 }
 
 void AFPSGameMode::CompleteMission(APawn* InstigatorPawn)
