@@ -55,4 +55,23 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+protected:
+	
+	UPROPERTY(EditInstanceOnly, Category="AI")
+	bool bPatrol;
+
+	/** meta specifier meta=(EditCondition="bPatrol") allows 
+	this property to be editable if bPatrol is true */
+	UPROPERTY(EditInstanceOnly, Category = "AI", meta = (EditCondition = "bPatrol"))
+	AActor* FirstPatrolPoint;
+
+
+	UPROPERTY(EditInstanceOnly, Category = "AI", meta = (EditCondition = "bPatrol"))
+	AActor* SecondPatrolPoint;
+
+	/** current locatin whether AI is either Moving or standing; not exposed to BP */
+	AActor* CurrentPatrolPoint;
+
+	void MoveToNextPatrolPoint();
 };

@@ -7,6 +7,10 @@
 #include "TimerManager.h"
 #include "FPSGameModeInterface.h"
 #include "GameFramework/GameModeBase.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "AIController.h"
+
+
 
 // Sets default values
 AFPSAIGuard::AFPSAIGuard()
@@ -31,13 +35,32 @@ void AFPSAIGuard::BeginPlay()
 	
 	OriginalRotation = GetActorRotation();
 
+	if (bPatrol)
+	{
+		MoveToNextPatrolPoint();
+	}
 }
 
 // Called every frame
 void AFPSAIGuard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Patrol Goal Checks
+	if (CurrentPatrolPoint)
+	{
+		FVector DeltaToGoal = GetActorLocation() - CurrentPatrolPoint->GetActorLocation();
+		//float DistanceToGoal = DeltaToGoal.Size();  // include Z as a distance
+		float DistanceToGoal = DeltaToGoal.DistXY(GetActorLocation(), CurrentPatrolPoint->GetActorLocation());
+
+		// if we are within 70 units of patrol point then pick the next patrol point
+		if (DistanceToGoal < 70.0f)
+		{
+			MoveToNextPatrolPoint();
+		}
+	}
 }
+
 
 void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 {
@@ -45,7 +68,8 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 	{
 		return;
 	}
- 
+
+	 
 	DrawDebugSphere(GetWorld(), SeenPawn->GetActorLocation(), 32.0f, 12, FColor::Red, false, 10.0f);
 
 // Interface class of GameMode is used to avoid casting
@@ -56,6 +80,13 @@ void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 	}
 
 	SetGuardState(EAIState::Alerted);
+
+	bPatrol = false;
+	//StopMoving if patrolling
+	if (Controller)
+	{
+		Controller->StopMovement();
+	}
 }
 
 void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, float Volume)
@@ -81,6 +112,13 @@ void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, 
 	GetWorldTimerManager().SetTimer(TimerHandleResetOrientation,this, &AFPSAIGuard::ResetOrientation, 2.0f);
 
 	SetGuardState(EAIState::Suspicious);
+
+	//StopMoving if patrolling
+	if (Controller)
+	{
+		Controller->StopMovement();
+	}
+
 }
 
 void AFPSAIGuard::ResetOrientation()
@@ -92,6 +130,12 @@ void AFPSAIGuard::ResetOrientation()
 
 	SetActorRotation(OriginalRotation);
 	SetGuardState(EAIState::Idle);
+
+	// Stop investigating and patrol if we are a patrolling Pawn; bPatrol=true
+	if (bPatrol)
+	{
+		MoveToNextPatrolPoint();
+	}
 }
 
 void  AFPSAIGuard::SetGuardState(EAIState NewState)
@@ -103,6 +147,26 @@ void  AFPSAIGuard::SetGuardState(EAIState NewState)
 
 	GuardState = NewState;
 	OnStateChanged(GuardState);
+}
+
+void AFPSAIGuard::MoveToNextPatrolPoint()
+{
+	if (CurrentPatrolPoint == nullptr || CurrentPatrolPoint==SecondPatrolPoint)
+	{
+		CurrentPatrolPoint = FirstPatrolPoint;
+	}
+	else
+	{
+		CurrentPatrolPoint = SecondPatrolPoint;
+	}
+
+	// No need to call BP Library function
+	//UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), CurrentPatrolPoint);
+
+	// Alternative ; and it works
+	AAIController* GuardController = Cast<AAIController>(Controller);
+	GuardController->MoveToActor(CurrentPatrolPoint);
+	
 }
 
 
