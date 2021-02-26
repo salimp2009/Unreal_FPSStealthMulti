@@ -1,10 +1,19 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copy Rights by Salim Pamukcu 2021
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "FPSAIGuard.generated.h"
+
+
+UENUM(BlueprintType)
+enum class EAIState: uint8  // unint8 is required if exposed to Blueprint
+{
+	Idle,
+	Suspicious,
+	Alerted
+};
 
 UCLASS()
 class FPSGAME_API AFPSAIGuard : public ACharacter
@@ -35,6 +44,13 @@ protected:
 
 	UFUNCTION()
 	void ResetOrientation();
+
+	EAIState GuardState;
+
+	void SetGuardState(EAIState NewState);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category="AI")
+	void OnStateChanged(EAIState NewState);
 
 public:	
 	// Called every frame
