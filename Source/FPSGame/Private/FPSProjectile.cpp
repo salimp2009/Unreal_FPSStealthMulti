@@ -4,6 +4,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 
+
 AFPSProjectile::AFPSProjectile() 
 {
 	// Use a sphere as a simple collision representation
@@ -29,6 +30,10 @@ AFPSProjectile::AFPSProjectile()
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
+
+	// server will spawn the projectile and projectiles will be replicated by clients
+	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 
@@ -45,6 +50,12 @@ void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 		e.g FPSCharacter spawn the Projectile in the FireFunction 
 		and passes himself as an instigator in the SpawnParams structure
 	*/
-	MakeNoise(1.0f, GetInstigator(), GetActorLocation());
-	Destroy();
+
+	// needs to be called only by Server!!!
+	if (HasAuthority())
+	{
+		MakeNoise(1.0f, GetInstigator(), GetActorLocation());
+		Destroy();
+	}
+	
 }

@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/PawnNoiseEmitterComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 
 AFPSCharacter::AFPSCharacter()
@@ -51,6 +52,30 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 }
 
+void AFPSCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	/** to see the arms of player in right angle on server 
+		RemoteViewPitch is run both server and client
+		we only need to change Remote copy of this instance; client has already right rotation ??
+	*/
+	if (!IsLocallyControlled())
+	{
+		//FRotator NewRot = Mesh1PComponent->GetRelativeRotation();
+		//Mesh1PComponent->SetRelativeRotation(NewRot);
+		
+		FRotator NewRot = CameraComponent->GetRelativeRotation();
+		
+		/** RemoteViewPitch is store as 1 byte (uint8) for compression; 
+			decompress to see actual value in World */
+		NewRot.Pitch = RemoteViewPitch*360.0f/255.0f;
+
+		CameraComponent->SetRelativeRotation(NewRot);
+	}
+	
+}
+
 // Interface implementation C++ and BP using delegates
 void AFPSCharacter::GetPickupItem()
 {
@@ -91,23 +116,10 @@ bool AFPSCharacter::HasObjective_Implementation()
 
 void AFPSCharacter::Fire()
 {
-	// try and fire a projectile
-	if (ProjectileClass)
-	{
-		FVector MuzzleLocation = GunMeshComponent->GetSocketLocation("Muzzle");
-		FRotator MuzzleRotation = GunMeshComponent->GetSocketRotation("Muzzle");
+	// Server will spawn the Projectile in the Server_Implementation
+	ServerFire();
 
-		//Set Spawn Collision Handling Override
-		FActorSpawnParameters ActorSpawnParams;
-		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-		ActorSpawnParams.Instigator = this;
-		
-		// spawn the projectile at the muzzle
-		GetWorld()->SpawnActor<AFPSProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, ActorSpawnParams);
-
-	}
-
-	// try and play the sound if specified
+	// try and play the sound if specified; Runs on requesting Client only
 	if (FireSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
@@ -123,6 +135,32 @@ void AFPSCharacter::Fire()
 			AnimInstance->PlaySlotAnimationAsDynamicMontage(FireAnimation, "Arms", 0.0f);
 		}
 	}
+}
+
+void AFPSCharacter::ServerFire_Implementation()
+{
+	// try and fire a projectile
+	if (ProjectileClass)
+	{
+		FVector MuzzleLocation = GunMeshComponent->GetSocketLocation("Muzzle");
+		FRotator MuzzleRotation = GunMeshComponent->GetSocketRotation("Muzzle");
+
+		//Set Spawn Collision Handling Override
+		FActorSpawnParameters ActorSpawnParams;
+		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+		ActorSpawnParams.Instigator = this;
+
+		// spawn the projectile at the muzzle
+		GetWorld()->SpawnActor<AFPSProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, ActorSpawnParams);
+	}
+
+}
+
+/** server checks if anythng is wrong and disconnects; to prevent cheating; 
+	generallt true; if false  then do some custom checks */
+bool AFPSCharacter::ServerFire_Validate()
+{
+	return true;
 }
 
 

@@ -161,11 +161,11 @@ void AFPSAIGuard::MoveToNextPatrolPoint()
 	}
 
 	// No need to call BP Library function
-	//UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), CurrentPatrolPoint);
+	UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), CurrentPatrolPoint);
 
 	// Alternative ; and it works
-	AAIController* GuardController = Cast<AAIController>(Controller);
-	GuardController->MoveToActor(CurrentPatrolPoint);
+	//AAIController* GuardController = Cast<AAIController>(Controller);
+	//GuardController->MoveToActor(CurrentPatrolPoint);
 	
 }
 

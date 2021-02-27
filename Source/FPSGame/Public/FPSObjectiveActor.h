@@ -19,7 +19,7 @@ public:
 protected:
 
 	UPROPERTY(VisibleAnyWhere, Category = "Components")
-	UStaticMeshComponent* MeshComp;
+	class UStaticMeshComponent* MeshComp;
 
 	UPROPERTY(VisibleAnyWhere, Category="Components")
 	USphereComponent* SphereComp;
