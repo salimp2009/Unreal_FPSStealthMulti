@@ -30,7 +30,6 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 		/** Disableinput stops movement of the Pawn 
 			but PlayerController can still get input to access menus..etc
 		*/
-		UE_LOG(LogTemp, Warning, TEXT("FPSGameMode; Mission is Complete"));
 		InstigatorPawn->DisableInput(nullptr);
 		
 		

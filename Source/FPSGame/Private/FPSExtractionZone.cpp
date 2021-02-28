@@ -41,16 +41,11 @@ void AFPSExtractionZone::HandleOverlap(UPrimitiveComponent* OverlappedComponent,
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Extraction Zone: Player Entered Extraction Zone!!!"));
-
-	// Get a reference to current player that Overlapped; using FPSPlayerInterface
-	APawn* MyPawn = PlayerInterface->GetPlayer();
-	
 	// Check Player has Objective
 	if (PlayerInterface->Execute_HasObjective(OtherActor))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Extraction Zone: Player Has Objective!!!"));
-
+		APawn* MyPawn = PlayerInterface->GetPlayer();
+		
 		// Interface class of GameMode is used to avoid casting
 		IFPSGameModeInterface* GM = Cast<IFPSGameModeInterface>(GetWorld()->GetAuthGameMode());
 		if (GM)
@@ -64,7 +59,6 @@ void AFPSExtractionZone::HandleOverlap(UPrimitiveComponent* OverlappedComponent,
 		if(ObjectiveMissingSound) UGameplayStatics::PlaySound2D(this, ObjectiveMissingSound);
 	}
 
-	
-
+	UE_LOG(LogTemp, Warning, TEXT("Extraction Zone: Player Entered Extraction Zone!!!"));
 }
 

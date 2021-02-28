@@ -42,6 +42,10 @@ protected:
 public:
 	AFPSCharacter();
 
+	/** Property replication */
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category="Projectile")
 	TSubclassOf<AFPSProjectile> ProjectileClass;
@@ -54,7 +58,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	UAnimSequence* FireAnimation;
 
-	UPROPERTY(BlueprintReadWrite, Category="Gameplay")
+	UPROPERTY(Replicated, BlueprintReadWrite, Category="Gameplay")
 	bool bIsCarryingObjective;
 
 

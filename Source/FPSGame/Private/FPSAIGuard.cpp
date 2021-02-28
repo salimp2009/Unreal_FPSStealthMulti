@@ -9,6 +9,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "AIController.h"
+#include "Net/UnrealNetwork.h"
 
 
 
@@ -27,6 +28,7 @@ AFPSAIGuard::AFPSAIGuard()
 	GuardState = EAIState::Idle;
 	
 }
+
 
 // Called when the game starts or when spawned
 void AFPSAIGuard::BeginPlay()
@@ -64,29 +66,30 @@ void AFPSAIGuard::Tick(float DeltaTime)
 
 void AFPSAIGuard::OnPawnSeen(APawn* SeenPawn)
 {
-	if (SeenPawn==nullptr)
-	{
-		return;
-	}
+	
+		if (SeenPawn == nullptr)
+		{
+			return;
+		}
 
-	 
-	DrawDebugSphere(GetWorld(), SeenPawn->GetActorLocation(), 32.0f, 12, FColor::Red, false, 10.0f);
 
-// Interface class of GameMode is used to avoid casting
-	IFPSGameModeInterface* GM = Cast<IFPSGameModeInterface>(GetWorld()->GetAuthGameMode());
-	if (GM)
-	{
-		GM->HasCompletedMission(SeenPawn, false);
-	}
+		DrawDebugSphere(GetWorld(), SeenPawn->GetActorLocation(), 32.0f, 12, FColor::Red, false, 10.0f);
 
-	SetGuardState(EAIState::Alerted);
+		// Interface class of GameMode is used to avoid casting
+		IFPSGameModeInterface* GM = Cast<IFPSGameModeInterface>(GetWorld()->GetAuthGameMode());
+		if (GM)
+		{
+			GM->HasCompletedMission(SeenPawn, false);
+		}
 
-	bPatrol = false;
-	//StopMoving if patrolling
-	if (Controller)
-	{
-		Controller->StopMovement();
-	}
+		SetGuardState(EAIState::Alerted);
+
+		bPatrol = false;
+		//StopMoving if patrolling
+		if (Controller)
+		{
+			Controller->StopMovement();
+		}
 }
 
 void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, float Volume)
@@ -138,6 +141,12 @@ void AFPSAIGuard::ResetOrientation()
 	}
 }
 
+void AFPSAIGuard::OnRep_GuardState()
+{
+	/** Server will update player clients only (not hosting client if there is any) & send it to BP */
+	OnStateChanged(GuardState);
+}
+
 void  AFPSAIGuard::SetGuardState(EAIState NewState)
 {
 	if (GuardState ==NewState)
@@ -145,8 +154,11 @@ void  AFPSAIGuard::SetGuardState(EAIState NewState)
 		return;
 	}
 
+	// Set on Server only
 	GuardState = NewState;
-	OnStateChanged(GuardState);
+	
+	/** update the hosting client ; if one of the clients is hosting server */
+	OnRep_GuardState();
 }
 
 void AFPSAIGuard::MoveToNextPatrolPoint()
@@ -160,14 +172,23 @@ void AFPSAIGuard::MoveToNextPatrolPoint()
 		CurrentPatrolPoint = SecondPatrolPoint;
 	}
 
-	// No need to call BP Library function
+	// No need to call BP Library function if the Alternative is used
 	UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), CurrentPatrolPoint);
 
 	// Alternative ; and it works
 	//AAIController* GuardController = Cast<AAIController>(Controller);
 	//GuardController->MoveToActor(CurrentPatrolPoint);
-	
 }
+
+void AFPSAIGuard::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//Replicate current health.
+	DOREPLIFETIME(AFPSAIGuard, GuardState);
+}
+
+
 
 
 
