@@ -6,6 +6,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/Pawn.h"
 #include "Kismet/GameplayStatics.h"
+#include "FPSGameState.h"
 
 AFPSGameMode::AFPSGameMode()
 {
@@ -15,6 +16,8 @@ AFPSGameMode::AFPSGameMode()
 
 	// use our custom HUD class
 	HUDClass = AFPSHUD::StaticClass();
+
+	GameStateClass = AFPSGameState::StaticClass();
 }
 
 void AFPSGameMode::HasCompletedMission(APawn* PlayerPawn, bool bMissionSuccess)
@@ -30,7 +33,8 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 		/** Disableinput stops movement of the Pawn 
 			but PlayerController can still get input to access menus..etc
 		*/
-		InstigatorPawn->DisableInput(nullptr);
+		
+		//InstigatorPawn->DisableInput(nullptr); // DELETED Moved to FPSGameState !!!!!
 		
 		
 		if (SpectatingViewPointClass)
@@ -57,6 +61,13 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("GAMEMode::No SpectatingViewPointClass is SET in World. Please setup in GameMode Defaults!!!"));
 		}
+		
+		AFPSGameState* GS= GetGameState<AFPSGameState>();
+		if (GS)
+		{
+			GS->MulticastOnMissionComplete(InstigatorPawn, bMissionSuccess);
+		}
+	
 
 		OnMissionCompleted(InstigatorPawn, bMissionSuccess);
 	}

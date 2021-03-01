@@ -25,6 +25,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UDecalComponent* DecalComp;
 
+	// Check if Transient specifier is better to use since it is spawned!!!
 	UPROPERTY(EditDefaultsOnly, Category="Sounds")
 	class USoundBase* ObjectiveMissingSound;
 
