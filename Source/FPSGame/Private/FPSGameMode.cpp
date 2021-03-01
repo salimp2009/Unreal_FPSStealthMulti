@@ -29,18 +29,10 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 {
 	if (InstigatorPawn)
 	{
-		// Disableinput expects PlayerController or nullptr; both are OK!!!
-		/** Disableinput stops movement of the Pawn 
-			but PlayerController can still get input to access menus..etc
-		*/
-		
-		//InstigatorPawn->DisableInput(nullptr); // DELETED Moved to FPSGameState !!!!!
-		
 		
 		if (SpectatingViewPointClass)
 		{
 			TArray<AActor*> ReturnedActors;
-
 			UGameplayStatics::GetAllActorsWithInterface(this, SpectatingViewPointClass, ReturnedActors);
 			//UGameplayStatics::GetAllActorsWithTag(this, "SpectatingCamera", ReturnedActors); // Alternative way to get actors with tags
 		
@@ -49,13 +41,19 @@ void AFPSGameMode::CompleteMission(APawn* InstigatorPawn, bool bMissionSuccess)
 			{
 				AActor* NewViewTarget = ReturnedActors[0];
 
-				// Get Player Controller to Set View Target to Spectating Camera Actor (NewViewTarget) 
-				APlayerController* PC = Cast<APlayerController>(InstigatorPawn->Controller);
-				if (PC)
+				for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 				{
-					PC->SetViewTargetWithBlend(NewViewTarget, 3.0f, EViewTargetBlendFunction::VTBlend_Linear);
+					// Get Player Controller to Set View Target to Spectating Camera Actor (NewViewTarget) 
+					APlayerController* PC = It->Get();
+					
+					// We want to both Player Controllers to change the view therefore PC->IsLocalController() is not used;
+					if (PC)
+					{
+						PC->SetViewTargetWithBlend(NewViewTarget, 3.0f, EViewTargetBlendFunction::VTBlend_Linear);
+					}
 				}
 			}
+
 		}
 		else
 		{

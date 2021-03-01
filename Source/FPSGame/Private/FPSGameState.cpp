@@ -3,38 +3,28 @@
 
 #include "FPSGameState.h"
 #include "EngineUtils.h"
-#include  "FPSPlayerInterface.h"
+#include "FPSPlayerController.h"
 
 
 void AFPSGameState::MulticastOnMissionComplete_Implementation(APawn* InstigatorPawn, bool bMissionSuccess)
 {
-	/** Original way except used TActorIterator<APawn> ; other one depreciated */
-	
-	//for (TActorIterator<APawn> It(GetWorld()); It; ++It)
-	//{
-	//	APawn* MyPawn = *It;
-	//	if (MyPawn && MyPawn->IsLocallyControlled())
-	//	{
-	//		MyPawn->DisableInput(nullptr);
-	//	}
-	//}
-
 
 	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
-		APlayerController* PC = Cast<APlayerController>(It->Get());
+		/** OK to cast FPSPlayerController since it only has one extra BP function otherwise make an Interface for it */
+		AFPSPlayerController* PC = Cast<AFPSPlayerController>(It->Get());
 
+		/** Player Controller runs on both Server and Client; we want only the Client PC to display the HUD */	
 		if (PC && PC->IsLocalController())
 		{
-			//IFPSPlayerInterface* PlayerInterface = Cast<IFPSPlayerInterface>(PC->GetPawn());
+			PC->OnMissionCompleted(InstigatorPawn, bMissionSuccess);
 			
-			APawn* MyPawn2 = PC->GetPawn(); // Alternative if PlayerInterface version does not work
-			if (MyPawn2)
+			//Disable Input
+			APawn* MyPawn = PC->GetPawn(); // PlayerInterface is not needed since APawn will be called anyway
+			if (MyPawn)
 			{
-				//APawn* MyPawn = PlayerInterface->GetPlayer();
-				//if(MyPawn) MyPawn->DisableInput(nullptr);
-
-				if (MyPawn2) MyPawn2->DisableInput(nullptr);
+				if (MyPawn) MyPawn->DisableInput(PC);
+				
 			}
 		}
 	}
